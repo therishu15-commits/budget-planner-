@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>HostelBudget</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F4F6F3;--tx:#12201A;--mu:#4A5A52;--gr:#0B5A3C;--ac:#1F9D6B;--gl:rgba(255,255,255,.55);--gb:rgba(255,255,255,.85);--tint:rgba(150,225,190,.42);--chip:rgba(255,255,255,.7);--ln:rgba(14,107,71,.12);--bad:#B3261E;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1814;--tx:#e8f1ec;--mu:#a3b6ab;--gr:#7fe0b3;--ac:#3cc08a;--gl:rgba(255,255,255,.07);--gb:rgba(255,255,255,.14);--tint:rgba(80,200,150,.20);--chip:rgba(255,255,255,.12);--ln:rgba(255,255,255,.10);--bad:#ff8a80}}
+:root[data-theme="dark"]{--bg:#0e1814;--tx:#e8f1ec;--mu:#a3b6ab;--gr:#7fe0b3;--ac:#3cc08a;--gl:rgba(255,255,255,.07);--gb:rgba(255,255,255,.14);--tint:rgba(80,200,150,.20);--chip:rgba(255,255,255,.12);--ln:rgba(255,255,255,.10);--bad:#ff8a80}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-tap-highlight-color:transparent}
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(300px 300px at 100% 0%,rgba(120,210,170,.5),transparent 70%),radial-gradient(300px 300px at 0% 45%,rgba(150,160,225,.35),transparent 70%),radial-gradient(280px 280px at 100% 100%,rgba(170,225,200,.45),transparent 70%)}
+.app{position:relative;z-index:1;max-width:430px;margin:0 auto;padding:28px 20px 110px;min-height:100vh}
+.glass{background:var(--gl);-webkit-backdrop-filter:blur(22px) saturate(160%);backdrop-filter:blur(22px) saturate(160%);border:1px solid var(--gb);box-shadow:0 8px 28px rgba(40,70,60,.10),inset 0 1px 0 var(--gb)}
+.rise{animation:rise .6s cubic-bezier(.2,.7,.2,1) both}.d1{animation-delay:.05s}.d2{animation-delay:.12s}.d3{animation-delay:.2s}.d4{animation-delay:.28s}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+button{font-family:inherit;color:inherit;cursor:pointer;transition:transform .15s ease,background .2s}
+button:active{transform:scale(.95)}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--gr);outline-offset:2px}
+.view{display:none}.view.on{display:block}
+.mu{color:var(--mu)}
+.row{display:flex;align-items:center}
+.bar{height:8px;border-radius:4px;background:var(--ln);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:4px;background:var(--ac);transition:width .8s cubic-bezier(.2,.7,.2,1)}
+.act{flex:1;height:52px;border-radius:18px;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:6px}
+.it{display:flex;align-items:center;gap:12px;min-height:46px;border-bottom:1px solid var(--ln)}
+.it:last-child{border-bottom:none}
+.it svg,.ic{flex:none;stroke:var(--gr)}
+.why summary{list-style:none;display:flex;align-items:center;justify-content:space-between;min-height:44px;font-size:13px;font-weight:700;color:var(--gr);cursor:pointer}
+.why summary::-webkit-details-marker{display:none}
+.why .chev{transition:transform .25s}.why[open] .chev{transform:rotate(180deg)}
+.chip{padding:10px 14px;border-radius:20px;font-size:14px;font-weight:700;border:1px solid var(--gb);background:var(--gl);min-height:44px}
+.chip[aria-pressed="true"]{background:var(--tint);border-color:var(--ac);color:var(--gr)}
+input.f,select.f{width:100%;min-height:48px;padding:0 14px;border-radius:14px;border:1px solid var(--gb);background:var(--gl);color:var(--tx);font:inherit;font-size:16px}
+label.l{display:block;font-size:13px;font-weight:600;color:var(--mu);margin:14px 0 6px}
+.nav{position:fixed;z-index:5;left:50%;transform:translateX(-50%);width:calc(100% - 40px);max-width:390px;bottom:calc(18px + env(safe-area-inset-bottom,0px));height:64px;border-radius:32px;display:flex;justify-content:space-around;align-items:center;padding:0 8px}
+.nav button{min-width:68px;height:48px;border:none;border-radius:24px;background:transparent;color:var(--mu);font-size:11px;font-weight:600;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.nav button svg{stroke:var(--mu)}
+.nav button[aria-current="page"]{background:var(--tint);color:var(--gr);font-weight:700}
+.nav button[aria-current="page"] svg{stroke:var(--gr)}
+.toast{position:fixed;z-index:9;left:50%;top:calc(16px + env(safe-area-inset-top,0px));transform:translate(-50%,-90px);padding:12px 18px;border-radius:24px;font-weight:700;font-size:14px;transition:transform .4s cubic-bezier(.2,.7,.2,1);background:var(--tint);color:var(--gr)}
+.toast.on{transform:translate(-50%,0)}
+.del{border:none;background:none;color:var(--mu);width:44px;height:44px;font-size:16px}
+@media (prefers-reduced-motion:reduce){.rise{animation:none}.bar i,.toast{transition:none}}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="toast glass" id="toast" role="status" aria-live="polite"></div>
+<div class="app">
+
+<section class="view on" id="v-home">
+  <div class="row rise" style="justify-content:space-between;margin-bottom:14px">
+    <div><div class="mu" style="font-size:14px;font-weight:600" id="greet">Good morning 👋</div><div id="uname" style="font-size:26px;font-weight:800;letter-spacing:-.5px;line-height:1.15">Rishu</div></div>
+  </div>
+  <div class="glass rise d1" style="border-radius:28px;padding:18px 20px 4px;margin-bottom:12px;background:var(--tint)">
+    <div class="row" style="justify-content:space-between">
+      <div style="font-size:15px;font-weight:700">Safe to spend today</div>
+      <div class="row" id="status" style="gap:6px;padding:6px 10px;border-radius:20px;background:var(--chip);font-size:12px;font-weight:700;color:var(--gr)"></div>
+    </div>
+    <div id="safe" style="font-size:64px;font-weight:800;letter-spacing:-2.5px;line-height:1.05;color:var(--gr);margin-top:2px">₹0</div>
+    <div class="mu" style="font-size:13px"><span id="days">20</span> days remaining</div>
+    <details class="why">
+      <summary>How is this calculated?<svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></summary>
+      <div style="padding:0 0 12px;font-size:13px;line-height:1.7" class="mu">
+        <div class="row" style="justify-content:space-between"><span>Remaining money</span><b style="color:var(--tx)" id="c-rem"></b></div>
+        <div class="row" style="justify-content:space-between"><span>Days remaining</span><b style="color:var(--tx)" id="c-days"></b></div>
+        <div class="row" style="justify-content:space-between"><span>Daily safe budget</span><b style="color:var(--gr)" id="c-eq"></b></div>
+      </div>
+    </details>
+  </div>
+  <div class="glass rise d2" style="border-radius:24px;padding:14px 20px;margin-bottom:12px">
+    <div class="row" style="align-items:baseline;gap:8px"><div id="rem" style="font-size:32px;font-weight:800;letter-spacing:-1px;line-height:1">₹0</div><div class="mu" style="font-size:14px">left this month</div></div>
+    <div class="bar" style="margin-top:12px"><i id="bar" style="width:0"></i></div>
+    <div class="row mu" style="justify-content:space-between;margin-top:10px;font-size:13px"><div>Monthly budget <b style="color:var(--tx)" id="bud"></b></div><div id="inwrap" style="display:none">Money in <b style="color:var(--tx)" id="inc-h"></b></div><div>Spent <b style="color:var(--tx)" id="spent"></b></div></div>
+  </div>
+  <div class="row rise d3" style="gap:10px;margin-bottom:14px">
+    <button class="glass act" data-go="add" style="flex:1.3;color:var(--gr);background:var(--tint)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Add Expense</button>
+    <button class="glass act" data-go="profile"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18"/></svg>Budget</button>
+    <button class="glass act" data-go="expenses"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>History</button>
+  </div>
+  <button class="glass rise d3" data-go="afford" style="width:100%;text-align:left;border-radius:22px;padding:14px 16px;margin-bottom:12px;display:flex;align-items:center;gap:12px"><div style="flex:1"><div style="font-size:16px;font-weight:800">Can I afford this?</div><div class="mu" style="font-size:13px">Check before you spend.</div></div><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button>
+  <div class="glass rise d3" style="border-radius:22px;padding:12px 16px;margin-bottom:14px">
+    <button id="ai-btn" class="act" style="width:100%;height:48px;border:none;border-radius:16px;background:var(--tint);color:var(--gr)">✨ AI Money Insight</button>
+    <div id="ai-out" class="mu" role="status" aria-live="polite" style="display:none;font-size:14px;line-height:1.5;margin-top:10px"></div>
+  </div>
+  <div class="rise d4" style="font-size:16px;font-weight:800;margin:0 4px 8px">Recent expenses</div>
+  <div class="glass rise d4" id="recent" style="border-radius:22px;padding:2px 16px"></div>
+</section>
+
+<section class="view" id="v-add">
+  <div class="row" style="gap:6px;margin-bottom:18px">
+    <button class="glass" data-go="home" aria-label="Back" style="width:44px;height:44px;border-radius:22px;padding:0;display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <div style="font-size:22px;font-weight:800;margin-left:6px">Add Expense</div>
+  </div>
+  <div class="glass" style="border-radius:26px;padding:18px 20px">
+    <label class="mu" for="amt" style="font-size:13px;font-weight:600">Amount</label>
+    <div class="row" style="gap:6px"><span style="font-size:44px;font-weight:800;color:var(--gr)">₹</span><input id="amt" type="number" inputmode="decimal" min="0" placeholder="0" style="flex:1;min-width:0;border:none;background:none;font:inherit;font-size:52px;font-weight:800;color:var(--tx);outline-offset:4px;width:100%"></div>
+    <div class="mu" id="amt-err" style="font-size:13px;color:var(--bad);min-height:18px"></div>
+  </div>
+  <div style="font-size:15px;font-weight:800;margin:18px 4px 8px">Category</div>
+  <div class="row" id="cats" style="flex-wrap:wrap;gap:8px"></div>
+  <label class="l" for="note">Add note (optional)</label>
+  <input class="f" id="note" type="text" maxlength="60" placeholder="e.g. chai with friends">
+  <button class="glass act" id="save" style="width:100%;margin-top:22px;height:56px;color:var(--gr);background:var(--tint);font-size:16px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Add Expense</button>
+</section>
+
+<section class="view" id="v-afford">
+  <div class="row" style="gap:6px;margin-bottom:18px">
+    <button class="glass" data-go="home" aria-label="Back" style="width:44px;height:44px;border-radius:22px;padding:0;display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <div style="font-size:22px;font-weight:800;margin-left:6px">Can I afford this?</div>
+  </div>
+  <div class="glass" style="border-radius:26px;padding:4px 20px 20px">
+    <label class="l" for="af-item">What do you want to buy?</label><input class="f" id="af-item" type="text" maxlength="60" placeholder="e.g. table, or: table for ₹1,200">
+    <label class="l" for="af-amt">Price (₹)</label><input class="f" id="af-amt" type="number" inputmode="decimal" min="0" placeholder="1200">
+    <div id="af-err" style="font-size:13px;color:var(--bad);min-height:18px;margin-top:6px"></div>
+    <button class="glass act" id="af-btn" style="width:100%;margin-top:6px;height:52px;color:var(--gr);background:var(--tint);font-size:16px">Check</button>
+  </div>
+  <div id="af-res" class="glass" role="status" aria-live="polite" style="display:none;border-radius:24px;padding:16px 20px;margin-top:14px">
+    <div id="af-badge" style="font-size:22px;font-weight:800"></div>
+    <div id="af-lines" style="margin-top:8px;font-size:15px;line-height:1.6"></div>
+    <div id="af-ai" class="mu" style="margin-top:12px;font-size:14px;line-height:1.5;border-top:1px solid var(--ln);padding-top:10px"></div>
+  </div>
+</section>
+
+<section class="view" id="v-expenses">
+  <div style="font-size:26px;font-weight:800;margin-bottom:4px">Expenses</div>
+  <div class="mu" style="font-size:14px;margin-bottom:14px" id="ex-sum"></div>
+  <div class="glass" id="all" style="border-radius:22px;padding:2px 16px"></div>
+</section>
+
+<section class="view" id="v-insights">
+  <div style="font-size:26px;font-weight:800;margin-bottom:14px">Insights</div>
+  <div class="glass" style="border-radius:22px;padding:20px"><b>Coming soon</b><div class="mu" style="font-size:14px;margin-top:6px">Spending insights arrive in a later version. For now, add expenses and watch your daily limit.</div></div>
+</section>
+
+<section class="view" id="v-profile">
+  <div style="font-size:26px;font-weight:800;margin-bottom:4px">Profile &amp; budget</div>
+  <div class="glass" style="border-radius:24px;padding:4px 20px 20px;margin-top:12px">
+    <label class="l" for="s-name">Your name</label><input class="f" id="s-name" type="text" maxlength="20">
+    <label class="l" for="s-bud">Monthly budget (₹)</label><input class="f" id="s-bud" type="number" inputmode="decimal" min="0">
+    <label class="l" for="s-days">Days remaining this month</label><input class="f" id="s-days" type="number" inputmode="numeric" min="1" max="31">
+  </div>
+  <div style="font-size:18px;font-weight:800;margin:22px 4px 8px">Money in</div>
+  <div class="glass" style="border-radius:24px;padding:14px 20px 16px">
+    <div class="row" style="align-items:baseline;gap:8px"><div id="inc-total" style="font-size:28px;font-weight:800;color:var(--gr)">₹0</div><div class="mu" style="font-size:14px">coming in this month</div></div>
+    <div class="mu" id="inc-math" style="font-size:12px;margin-top:2px"></div>
+    <div class="mu" style="font-size:12px;margin-top:2px">Money in adds to your monthly budget. If your allowance is already in your budget, add only extra money here.</div>
+    <div id="inc-list" style="margin-top:6px"></div>
+    <div style="font-weight:700;font-size:14px;margin-top:12px" id="inc-form-title">Add money in</div>
+    <label class="l" for="inc-src">Source</label>
+    <select class="f" id="inc-src"><option>Monthly allowance</option><option>Parents/Family</option><option>Scholarship</option><option>Part-time/Other</option><option>Custom</option></select>
+    <input class="f" id="inc-custom" type="text" maxlength="30" placeholder="Source name" aria-label="Custom source name" style="display:none;margin-top:8px">
+    <label class="l" for="inc-amt">Amount (₹)</label><input class="f" id="inc-amt" type="number" inputmode="decimal" min="0" placeholder="0">
+    <label class="l" for="inc-note">Note (optional)</label><input class="f" id="inc-note" type="text" maxlength="60">
+    <div id="inc-err" style="font-size:13px;color:var(--bad);min-height:18px;margin-top:6px"></div>
+    <div class="row" style="gap:8px"><button class="glass act" id="inc-save" style="color:var(--gr);background:var(--tint)">Add money in</button><button class="glass act" id="inc-cancel" style="display:none;flex:.5">Cancel</button></div>
+  </div>
+  <button class="glass act" id="reset" style="width:100%;margin-top:16px;color:var(--bad)">Reset to demo data</button>
+</section>
+</div>
+
+<nav class="nav glass" id="nav" aria-label="Main">
+  <button data-go="home" data-tab="home" aria-label="Home"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-7 8 7v8.5a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg>Home</button>
+  <button data-go="expenses" data-tab="expenses" aria-label="Expenses"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg>Expenses</button>
+  <button data-go="insights" data-tab="insights" aria-label="Insights"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 20V11M12 20V5M19 20v-7"/></svg>Insights</button>
+  <button data-go="profile" data-tab="profile" aria-label="Profile"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.5" r="3.5"/><path d="M5 20c.8-3.6 3.6-5.5 7-5.5s6.2 1.9 7 5.5"/></svg>Profile</button>
+</nav>
+
+<script>
+(function(){
+var KEY="hostelbudget-mvp-v1";
+var CATS=["Food","Travel","Hostel","Education","Shopping","Recharge","Other"];
+var IC={Food:"M5 9h11v5a5 5 0 0 1-5 5H10a5 5 0 0 1-5-5zM16 10h1.5a2.5 2.5 0 0 1 0 5H16M8 4v2M12 4v2",Travel:"M4 4h16v12H4zM4 11h16M8 20v-4M16 20v-4",Hostel:"M4 11l8-7 8 7v8.5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z",Education:"M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2zM8 7h7",Shopping:"M5 8h14l-1 12H6zM9 8V6a3 3 0 0 1 6 0v2",Recharge:"M7 3h10v18H7zM11 18h2",Other:"M5 12h.01M12 12h.01M19 12h.01"};
+function demo(){var t=Date.now();return{name:"Rishu",budget:8000,days:20,inc:[],ex:[
+{id:t-5,amt:3761,cat:"Hostel",note:"Fees paid earlier",t:t-5e6},
+{id:t-4,amt:120,cat:"Food",note:"Mess",t:t-4e6},
+{id:t-3,amt:40,cat:"Travel",note:"",t:t-3e6},
+{id:t-2,amt:299,cat:"Recharge",note:"",t:t-2e6},
+{id:t-1,amt:80,cat:"Food",note:"",t:t-1e6}]}}
+var S;
+try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){S=null}
+function normalize(){
+ if(!S||!Array.isArray(S.ex)){S=demo();return}
+ S.budget=Math.max(0,Number(S.budget)||0);
+ S.days=Math.min(31,Math.max(1,parseInt(S.days)||1));
+ S.name=String(S.name||"");
+ S.inc=(Array.isArray(S.inc)?S.inc:[]).filter(function(i){return i&&Number(i.amt)>0&&String(i.src||"").trim()}).map(function(i){return{id:String(i.id),src:String(i.src).trim().slice(0,30),amt:Math.round(Number(i.amt)*100)/100,note:String(i.note||"").slice(0,60),t:Number(i.t)||0}});
+ S.ex=S.ex.filter(function(e){return e&&Number(e.amt)>0&&CATS.indexOf(e.cat)>-1}).map(function(e){return{id:String(e.id),amt:Math.round(Number(e.amt)*100)/100,cat:e.cat,note:String(e.note||""),t:Number(e.t)||0}});
+}
+normalize();
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+var $=function(i){return document.getElementById(i)};
+function inr(n){return"₹"+Math.round(n).toLocaleString("en-IN")}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function icon(c){return'<svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="'+(IC[c]||IC.Other)+'"/></svg>'}
+function row(e,del){return'<div class="it">'+icon(e.cat)+'<div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:600">'+esc(e.cat)+'</div>'+(e.note?'<div class="mu" style="font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(e.note)+'</div>':'')+'</div><div style="font-size:15px;font-weight:800">'+inr(e.amt)+'</div>'+(del?'<button class="del" data-del="'+e.id+'" aria-label="Delete expense">✕</button>':'')+'</div>'}
+var shown={};
+function tween(id,to,fmt){var el=$(id),from=shown[id]==null?to:shown[id];shown[id]=to;
+ if(from===to||matchMedia("(prefers-reduced-motion:reduce)").matches){el.textContent=fmt(to);return}
+ var t0=performance.now();(function f(n){var p=Math.min(1,(n-t0)/450),e=1-Math.pow(1-p,3);el.textContent=fmt(from+(to-from)*e);if(p<1)requestAnimationFrame(f)})(t0)}
+/* SINGLE SOURCE OF TRUTH: every number on every screen comes from this one function, computed fresh from S. */
+var affReq=0;
+function r2(n){return Math.round(n*100)/100}
+function calc(){var spent=0,inc=0,cats={};S.ex.forEach(function(e){spent+=e.amt;cats[e.cat]=(cats[e.cat]||0)+e.amt});S.inc.forEach(function(i){inc+=i.amt});
+ spent=r2(spent);inc=r2(inc);var funds=r2(S.budget+inc),rem=r2(funds-spent),days=Math.max(1,S.days||1),top=Object.keys(cats).sort(function(a,b){return cats[b]-cats[a]})[0]||null;
+ return{budget:S.budget,inc:inc,funds:funds,spent:spent,rem:rem,days:days,safe:Math.round(rem/days),cats:cats,top:top,count:S.ex.length}}
+/* ALL changes go through mutate(): change -> normalize -> save -> invalidate AI -> render. */
+function mutate(fn){fn();normalize();save();aiReq++;resetAI();resetAfford();render()}
+function render(){
+ var c=calc(),h=new Date().getHours();
+ $("greet").textContent=(h<12?"Good morning":h<17?"Good afternoon":"Good evening")+" 👋";
+ $("uname").textContent=S.name||"Friend";
+ tween("safe",c.safe,function(v){return(v<0?"-":"")+inr(Math.abs(v))});
+ tween("rem",c.rem,function(v){return(v<0?"-":"")+inr(Math.abs(v))});
+ $("days").textContent=c.days;$("bud").textContent=inr(S.budget);$("spent").textContent=inr(c.spent);
+ var pct=c.funds>0?Math.min(100,Math.max(0,c.spent/c.funds*100)):0;$("bar").style.width=pct+"%";
+ var ok=c.rem>=0&&c.rem>=S.budget*.1,st=$("status");
+ st.innerHTML=(ok?'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>':'')+(c.rem<0?"Over budget":ok?"You're on track":"Running low");
+ st.style.color=c.rem<0?"var(--bad)":"var(--gr)";
+ $("c-rem").textContent=inr(c.rem);$("c-days").textContent=c.days;
+ $("c-eq").textContent=inr(c.rem)+" ÷ "+c.days+" = "+inr(c.safe)+"/day";
+ var ex=S.ex.slice().sort(function(a,b){return b.t-a.t});
+ $("recent").innerHTML=ex.length?ex.slice(0,4).map(function(e){return row(e)}).join(""):'<div class="mu" style="padding:14px 0">No expenses yet. Tap Add Expense.</div>';
+ $("all").innerHTML=ex.length?ex.map(function(e){return row(e,1)}).join(""):'<div class="mu" style="padding:14px 0">No expenses yet.</div>';
+ $("ex-sum").textContent=c.count+" expenses · "+inr(c.spent)+" spent · "+inr(c.rem)+" left";renderInc(c);
+}
+var cur="home",pick="Food";
+function go(v){
+ if(v==="add"){$("amt").value="";$("note").value="";$("amt-err").textContent="";paintCats()}
+ document.querySelectorAll(".view").forEach(function(s){s.classList.toggle("on",s.id==="v-"+v)});
+ $("nav").style.display=v==="add"?"none":"flex";
+ document.querySelectorAll("[data-tab]").forEach(function(b){if(b.dataset.tab===v)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current")});
+ if(v==="afford"){setTimeout(function(){$("af-item").focus()},50)}
+ if(v==="profile"){$("s-name").value=S.name||"";$("s-bud").value=S.budget;$("s-days").value=S.days}
+ cur=v;window.scrollTo(0,0);if(v==="add")setTimeout(function(){$("amt").focus()},50);
+}
+function paintCats(){$("cats").innerHTML=CATS.map(function(c){return'<button class="chip" data-cat="'+c+'" aria-pressed="'+(c===pick)+'">'+c+'</button>'}).join("")}
+var tt;function toast(m){var t=$("toast");t.textContent=m;t.classList.add("on");clearTimeout(tt);tt=setTimeout(function(){t.classList.remove("on")},2200)}
+document.addEventListener("click",function(ev){
+ var b=ev.target.closest("button");if(!b)return;
+ if(b.dataset.go){go(b.dataset.go);return}
+ if(b.dataset.cat){pick=b.dataset.cat;paintCats();return}
+ if(b.dataset.del){mutate(function(){S.ex=S.ex.filter(function(e){return e.id!==b.dataset.del})});return}
+});
+$("save").addEventListener("click",function(){
+ var a=parseFloat($("amt").value);
+ if(!(a>0)){$("amt-err").textContent="Enter an amount greater than 0.";$("amt").focus();return}
+ a=Math.round(a*100)/100;var note=$("note").value.trim();
+ mutate(function(){S.ex.push({id:Date.now()+"-"+Math.random().toString(36).slice(2,6),amt:a,cat:pick,note:note,t:Date.now()})});
+ go("home");toast(inr(a)+" added successfully");
+});
+$("amt").addEventListener("input",function(){$("amt-err").textContent=""});
+$("s-name").addEventListener("input",function(){var v=this.value;mutate(function(){S.name=v})});
+$("s-bud").addEventListener("input",function(){var v=parseFloat(this.value)||0;mutate(function(){S.budget=v})});
+$("s-days").addEventListener("input",function(){var v=parseInt(this.value)||1;mutate(function(){S.days=v})});
+$("reset").addEventListener("click",function(){if(confirm("Reset everything to the demo data?")){mutate(function(){S=demo()});go("home");toast("Demo data restored")}});
+
+
+/* ---------- MONEY IN ---------- */
+var editInc=null;
+function renderInc(c){
+ $("inwrap").style.display=c.inc>0?"block":"none";$("inc-h").textContent=inr(c.inc);
+ $("inc-total").textContent=inr(c.inc);
+ $("inc-math").textContent=inr(c.budget)+" budget + "+inr(c.inc)+" money in = "+inr(c.funds)+" to spend";
+ $("inc-list").innerHTML=S.inc.length?S.inc.slice().sort(function(a,b){return b.t-a.t}).map(function(i){
+  return'<div class="it"><div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:600">'+esc(i.src)+'</div>'+(i.note?'<div class="mu" style="font-size:12px">'+esc(i.note)+'</div>':'')+'</div><div style="font-size:15px;font-weight:800;color:var(--gr)">+'+inr(i.amt)+'</div><button class="del" data-ied="'+i.id+'" aria-label="Edit money in">✎</button><button class="del" data-idel="'+i.id+'" aria-label="Delete money in">✕</button></div>'}).join(""):'<div class="mu" style="padding:12px 0;font-size:14px">No money in yet. Add family support, a scholarship or part-time pay.</div>'}
+function incForm(on){$("inc-form-title").textContent=on?"Edit money in":"Add money in";$("inc-save").textContent=on?"Save changes":"Add money in";$("inc-cancel").style.display=on?"flex":"none"}
+function clearInc(){editInc=null;$("inc-amt").value="";$("inc-note").value="";$("inc-custom").value="";$("inc-custom").style.display="none";$("inc-src").selectedIndex=0;$("inc-err").textContent="";incForm(false)}
+$("inc-src").addEventListener("change",function(){$("inc-custom").style.display=this.value==="Custom"?"block":"none"});
+$("inc-cancel").addEventListener("click",clearInc);
+$("inc-save").addEventListener("click",function(){
+ var a=Math.round(parseFloat($("inc-amt").value)*100)/100;
+ if(!(a>0)){$("inc-err").textContent="Enter an amount greater than 0.";$("inc-amt").focus();return}
+ var src=$("inc-src").value;if(src==="Custom")src=$("inc-custom").value.trim()||"Custom";
+ var note=$("inc-note").value.trim(),id=editInc;
+ mutate(function(){if(id){S.inc.forEach(function(i){if(i.id===id){i.src=src;i.amt=a;i.note=note}})}else{S.inc.push({id:Date.now()+"-"+Math.random().toString(36).slice(2,6),src:src,amt:a,note:note,t:Date.now()})}});
+ clearInc();toast(inr(a)+(id?" updated":" added to money in"));
+});
+document.addEventListener("click",function(ev){
+ var b=ev.target.closest("button");if(!b)return;
+ if(b.dataset.idel){var id=b.dataset.idel;mutate(function(){S.inc=S.inc.filter(function(i){return i.id!==id})});if(editInc===id)clearInc();return}
+ if(b.dataset.ied){var e=S.inc.filter(function(i){return i.id===b.dataset.ied})[0];if(!e)return;editInc=e.id;
+  var std=["Monthly allowance","Parents/Family","Scholarship","Part-time/Other"].indexOf(e.src)>-1;
+  $("inc-src").value=std?e.src:"Custom";$("inc-custom").style.display=std?"none":"block";$("inc-custom").value=std?"":e.src;
+  $("inc-amt").value=e.amt;$("inc-note").value=e.note;incForm(true);$("inc-amt").focus()}
+});
+
+/* ---------- CAN I AFFORD THIS ---------- */
+var NUM="[\\d,]+(?:\\.\\d+)?";
+function parseAfford(){var t=$("af-item").value.trim(),a=parseFloat($("af-amt").value);
+ var re=new RegExp("₹\\s?("+NUM+")|(?:rs\\.?|inr)\\s?("+NUM+")|\\b("+NUM+")\\b","i");
+ if(!(a>0)){var m=t.match(re);if(m)a=parseFloat((m[1]||m[2]||m[3]).replace(/,/g,""))}
+ var item=t.replace(new RegExp("₹\\s?"+NUM+"|(?:rs\\.?|inr)\\s?"+NUM+"|\\b"+NUM+"\\b","ig"),"").replace(/^\s*(can i|should i)\s+(buy|afford|get)\s+(a|an|the)?\s*/i,"").replace(/\b(for|at|of)\s*\??\s*$/i,"").replace(/[?]/g,"").replace(/\s+/g," ").trim();
+ return{item:item||"this purchase",price:a}}
+/* Deterministic affordability. Gemini never sees this decision before it is made and cannot change it. */
+function afford(price){var c=calc(),after=r2(c.rem-price),sa=Math.round(after/c.days),st=after<0?"not":(sa<50||sa<c.safe*0.5)?"tight":"ok";
+ return{status:st,price:price,before:c.rem,after:after,short:after<0?r2(-after):0,days:c.days,safeBefore:c.safe,safeAfter:sa,c:c}}
+function resetAfford(){affReq++;$("af-res").style.display="none";$("af-ai").textContent="";$("af-btn").disabled=false;$("af-btn").textContent="Check"}
+function affOk(txt,r){var ok={};[r.price,r.before,r.after,r.short,r.safeBefore,r.safeAfter,r.days].forEach(function(n){ok[Math.round(Math.abs(n))]=1});
+ var m=txt.match(/₹\s?-?[\d,]+(\.\d+)?/g)||[];
+ if(!m.every(function(x){return ok[Math.round(parseFloat(x.replace(/[₹\s,\-]/g,"")))]}))return false;
+ if(r.status==="not"&&/✅|you can afford|can afford it/i.test(txt))return false;
+ if(r.status!=="not"&&/❌|not affordable|can't afford|cannot afford|over (your|the) (current )?(remaining )?budget/i.test(txt))return false;
+ return true}
+$("af-btn").addEventListener("click",async function(){
+ var q=parseAfford(),btn=this;
+ if(!(q.price>0)){$("af-err").textContent="Enter a price greater than 0.";$("af-amt").focus();return}
+ $("af-err").textContent="";var r=afford(q.price),c=r.c;
+ var badge={ok:"✅ Can afford",tight:"⚠️ Tight",not:"❌ Not affordable"}[r.status];
+ var L=[];
+ if(r.status==="not"){L.push("<b>Short by "+inr(r.short)+"</b>");L.push("You have "+inr(r.before)+" left and "+esc(q.item)+" costs "+inr(r.price)+".")}
+ else{L.push("<b>"+inr(r.after)+"</b> would remain after buying "+esc(q.item)+" ("+inr(r.price)+").");L.push("New safe daily spending: <b>"+inr(r.safeAfter)+"/day</b> for "+r.days+" days (now "+inr(r.safeBefore)+"/day).");
+  if(r.status==="tight")L.push("<span style=\"color:var(--bad)\">"+inr(r.price)+" is technically affordable, but it would leave you with only "+inr(r.safeAfter)+" per day for the remaining "+r.days+" days.</span>")}
+ $("af-badge").textContent=badge;$("af-lines").innerHTML=L.map(function(x){return"<div>"+x+"</div>"}).join("");
+ $("af-ai").textContent="Writing a short explanation…";$("af-res").style.display="block";
+ var my=++affReq;btn.disabled=true;btn.textContent="Checking…";
+ var payload={item:q.item,price:r.price,status:r.status,remainingBefore:r.before,remainingAfter:r.after,shortBy:r.short,days:r.days,safeDailyBefore:r.safeBefore,safeDailyAfter:r.safeAfter,categories:c.cats,recent:S.ex.slice().sort(function(a,b){return b.t-a.t}).slice(0,5).map(function(e){return{category:e.cat,amount:e.amt}})};
+ var msg="AI insight unavailable right now. Your affordability calculation is still available.";
+ try{var ctl=new AbortController(),to=setTimeout(function(){ctl.abort()},12000);
+  var res=await fetch("/api/afford",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload),signal:ctl.signal});clearTimeout(to);
+  if(my!==affReq)return;
+  if(res.status===429)msg="AI is busy right now. Your affordability calculation is still available.";
+  else if(res.ok){var d=await res.json();if(my!==affReq)return;if(d.explanation&&affOk(d.explanation,r))msg=d.explanation}
+ }catch(e){if(my!==affReq)return}
+ $("af-ai").textContent=msg;btn.disabled=false;btn.textContent="Check";
+});
+var aiBusy=false,aiLast=0,aiReq=0;
+function resetAI(){aiBusy=false;aiLast=0;var o=$("ai-out"),btn=$("ai-btn");o.style.display="none";o.textContent="";btn.disabled=false;btn.textContent="✨ AI Money Insight"}
+/* Fallback insight: built from calc() at the moment it is shown, never cached. */
+function localInsight(){var c=calc(),t=c.top?" "+c.top+" is currently your biggest expense category.":"";
+ if(c.rem<0)return"You're "+inr(-c.rem)+" over budget with "+c.days+" days left. Pausing extras for a few days can help."+t;
+ return"You have "+inr(c.rem)+" left for "+c.days+" days, giving you a safe daily budget of "+inr(c.safe)+"."+t}
+/* Reject any AI text that quotes a rupee amount that is not in the CURRENT data. */
+function aiTextOk(txt,p){var ok={};[p.budget,p.moneyIn,p.budget+p.moneyIn,p.spent,p.remaining,p.days,p.safeDaily].forEach(function(n){ok[Math.round(n)]=1});
+ Object.keys(p.categories).forEach(function(k){ok[Math.round(p.categories[k])]=1});p.recent.forEach(function(r){ok[Math.round(r.amount)]=1});
+ var m=txt.match(/₹\s?-?[\d,]+(\.\d+)?/g)||[];
+ return m.every(function(x){var n=Math.round(parseFloat(x.replace(/[₹\s,]/g,"").replace("-","")));return ok[n]})}
+function setAI(t,tag){var o=$("ai-out");o.style.display="block";o.innerHTML=esc(t)+(tag?'<div style="font-size:11px;margin-top:6px;opacity:.85">'+esc(tag)+'</div>':'')}
+$("ai-btn").addEventListener("click",async function(){
+ var btn=this;if(aiBusy||Date.now()-aiLast<8000)return;
+ var c=calc();
+ if(!c.count){setAI("Add your first expense and an insight will show up here.");return}
+ var recent=S.ex.slice().sort(function(a,b){return b.t-a.t}).slice(0,5).map(function(e){return{category:e.cat,amount:e.amt}});
+ var payload={budget:c.budget,moneyIn:c.inc,spent:c.spent,remaining:c.rem,days:c.days,safeDaily:c.safe,categories:c.cats,recent:recent};
+ var my=++aiReq;aiBusy=true;btn.disabled=true;btn.textContent="✨ Thinking…";setAI("Looking at your spending…");
+ var shown=false;
+ try{
+  var ctl=new AbortController(),to=setTimeout(function(){ctl.abort()},12000);
+  var r=await fetch("/api/insight",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload),signal:ctl.signal});
+  clearTimeout(to);
+  if(my!==aiReq)return; /* data changed while waiting: drop this answer */
+  if(r.status===429){setAI(localInsight(),"AI is busy right now, so this tip comes from your numbers. Try again in a minute.");shown=true}
+  else if(!r.ok){throw new Error("x")}
+  else{var d=await r.json();if(my!==aiReq)return;
+   if(!d.insight||!aiTextOk(d.insight,payload))throw new Error("x");
+   setAI(d.insight,"AI insight. Your balance and daily limit are calculated by the app itself.");shown=true}
+ }catch(e){if(my!==aiReq)return;if(!shown)setAI(localInsight(),"AI is unavailable right now, so this tip comes from your numbers.")}
+ finally{if(my===aiReq){aiBusy=false;aiLast=Date.now();btn.disabled=false;btn.textContent="✨ AI Money Insight"}}
+});
+paintCats();render();go("home");
+})();
+</script>
+</body>
+</html>
